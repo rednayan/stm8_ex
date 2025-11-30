@@ -1,6 +1,8 @@
 #include "stm8s.h"
 #include <stdint.h>
 
+#define TIM4_PERIOD 124
+
 #define LCD_GPIO_PORT_C (GPIOC)
 #define LCD_GPIO_PINS_C (GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4)
 
@@ -9,6 +11,33 @@
 
 #define LCD_GPIO_PORT_D (GPIOD)
 #define LCD_GPIO_PINS_D (GPIO_PIN_3)
+
+volatile uint32_t TimingDelay = 0;
+
+static void CLK_Config(void);
+static void TIM4_Config(void);
+
+static void CLK_Config(void) { CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1); }
+
+static void TIM4_Config(void) {
+  TIM4_TimeBaseInit(TIM4_PRESCALER_128, TIM4_PERIOD);
+  TIM4_ClearFlag(TIM4_FLAG_UPDATE);
+  TIM4_ITConfig(TIM4_IT_UPDATE, ENABLE);
+  enableInterrupts();
+  TIM4_Cmd(ENABLE);
+}
+
+void TimeDelayDecrement(void) {
+  if (TimingDelay != 0x00) {
+    TimingDelay--;
+  }
+}
+
+void delay_ms(volatile uint32_t ms) {
+  TimingDelay = ms;
+  while (TimingDelay != 0) {
+  }
+}
 
 void delay(uint16_t nCount) {
   while (nCount != 0) {
@@ -63,6 +92,9 @@ void LCD_Send_Char(char data) {
 }
 
 void main(void) {
+
+  CLK_Config();
+  TIM4_Config();
 
   GPIO_Init(LCD_GPIO_PORT_C, (GPIO_Pin_TypeDef)LCD_GPIO_PINS_C,
             GPIO_MODE_OUT_PP_LOW_FAST);
