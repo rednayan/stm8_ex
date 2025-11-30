@@ -1,1 +1,2 @@
-build
+lcd_display/build
+gpio_blinker/build
