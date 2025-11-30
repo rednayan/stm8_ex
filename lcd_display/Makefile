@@ -30,7 +30,7 @@ CORE_SRCS = $(SRC_DIR)/main.c $(SRC_DIR)/stm8s_it.c
 
 # 2. SPL driver files needed - FULL PATH
 # SPL_SRCS = $(SPL_SRC_DIR)/stm8s_gpio.c $(SPL_SRC_DIR)/stm8s_clk.c $(SPL_SRC_DIR)/stm8s_rst.c
-SPL_SRCS = $(SPL_SRC_DIR)/stm8s_gpio.c
+SPL_SRCS = $(SPL_SRC_DIR)/stm8s_gpio.c $(SPL_SRC_DIR)/stm8s_clk.c $(SPL_SRC_DIR)/stm8s_tim4.c
 
 # Combine all source files
 ALL_SRCS = $(CORE_SRCS) $(SPL_SRCS)

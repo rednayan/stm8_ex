@@ -51,6 +51,17 @@ void LCD_Write_Nibble(uint8_t val) {
   GPIO_WriteLow(LCD_GPIO_PORT_C, GPIO_PIN_4);
 }
 
+void LCD_Send_Command(uint8_t cmd) {
+  GPIO_WriteLow(LCD_GPIO_PORT_D, GPIO_PIN_3);
+  LCD_Write_Nibble(cmd >> 4);
+  LCD_Write_Nibble(cmd & 0xF);
+}
+void LCD_Send_Char(char data) {
+  GPIO_WriteHigh(LCD_GPIO_PORT_D, GPIO_PIN_3);
+  LCD_Write_Nibble(data >> 4);
+  LCD_Write_Nibble(data & 0xF);
+}
+
 void main(void) {
 
   GPIO_Init(LCD_GPIO_PORT_C, (GPIO_Pin_TypeDef)LCD_GPIO_PINS_C,
