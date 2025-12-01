@@ -27,21 +27,9 @@ static void TIM4_Config(void) {
   TIM4_Cmd(ENABLE);
 }
 
-void TimeDelayDecrement(void) {
-  if (TimingDelay != 0x00) {
-    TimingDelay--;
-  }
-}
-
 void delay_ms(volatile uint32_t ms) {
   TimingDelay = ms;
   while (TimingDelay != 0) {
-  }
-}
-
-void delay(uint16_t nCount) {
-  while (nCount != 0) {
-    nCount--;
   }
 }
 
@@ -76,7 +64,7 @@ void LCD_Write_Nibble(uint8_t val) {
     GPIO_WriteLow(LCD_GPIO_PORT_C, GPIO_PIN_3);
   }
   GPIO_WriteHigh(LCD_GPIO_PORT_C, GPIO_PIN_4);
-  delay(500);
+  delay_ms(5);
   GPIO_WriteLow(LCD_GPIO_PORT_C, GPIO_PIN_4);
 }
 
@@ -89,6 +77,34 @@ void LCD_Send_Char(char data) {
   GPIO_WriteHigh(LCD_GPIO_PORT_D, GPIO_PIN_3);
   LCD_Write_Nibble(data >> 4);
   LCD_Write_Nibble(data & 0xF);
+}
+
+void LCD_Send_String(char *str) {
+  while (*str) {
+    LCD_Send_Char(*str++);
+  }
+}
+
+void LCD_Init(void) {
+  delay_ms(16);
+  GPIO_WriteLow(LCD_GPIO_PORT_D, GPIO_PIN_3);
+  LCD_Write_Nibble(0x03);
+  delay_ms(5);
+  LCD_Write_Nibble(0x03);
+  delay_ms(1);
+  LCD_Write_Nibble(0x03);
+  delay_ms(1);
+  LCD_Write_Nibble(0x02);
+  delay_ms(1);
+  LCD_Send_Command(0x28);
+  delay_ms(1);
+  LCD_Send_Command(0x08);
+  delay_ms(1);
+  LCD_Send_Command(0x01);
+  delay_ms(1);
+  LCD_Send_Command(0x06);
+  delay_ms(1);
+  LCD_Send_Command(0x0C);
 }
 
 void main(void) {
@@ -104,6 +120,9 @@ void main(void) {
 
   GPIO_Init(LCD_GPIO_PORT_D, (GPIO_Pin_TypeDef)LCD_GPIO_PINS_D,
             GPIO_MODE_OUT_PP_LOW_FAST);
+
+  LCD_Init();
+  LCD_Send_String("Hello, World!");
 
   while (1) {
   }

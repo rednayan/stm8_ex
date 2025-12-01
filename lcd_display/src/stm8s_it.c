@@ -27,7 +27,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm8s_it.h"
+#include <stdint.h>
 
+extern volatile uint32_t TimingDelay;
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -431,6 +433,10 @@ INTERRUPT_HANDLER(TIM4_UPD_OVF_IRQHandler, 23) {
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+  if (TimingDelay != 0) {
+    TimingDelay--;
+  }
+  TIM4_ClearFlag(TIM4_FLAG_UPDATE);
 }
 #endif /*STM8S903*/
 
